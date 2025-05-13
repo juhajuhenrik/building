@@ -15,8 +15,9 @@ import random
 # --- Lataa API-avaimet ympäristömuuttujista tai .env-tiedostosta ---
 # Asenna python-dotenv: pip install python-dotenv
 load_dotenv(dotenv_path="config/.env")  # Polku .env-tiedostoon
-NEWS_API_KEY = os.getenv("NEWS_API_KEY")
+
 SERPAPI_KEY = os.getenv("SERPAPI_KEY")
+GNEWS_API_KEY = os.getenv("GNEWS_API_KEY")
 
 # Varmista, että avaimet löytyivät; jos eivät, näytä virhe ja pysäytä suoritus
 st.set_page_config(layout="wide", page_title="Kilpailija-analytiikka")
@@ -37,48 +38,38 @@ st.markdown("""
 st.sidebar.title("Valikko")
 page = st.sidebar.radio("Valitse sivu:", ["Pääsivu – uutiset", "Vertailu"], label_visibility='visible')
 
+
 # Sivupohja: uutissivu
 if page == "Pääsivu – uutiset":
     st.title("Kilpailija-analytiikka – uutiset (viimeiset 6 kk)")
     hakusana = st.text_input("Kilpailijan nimi", "Valio")
+
     if hakusana:
         end_date = datetime.today().date()
         start_date = end_date - timedelta(days=180)
-        # Hae uutiset
-        news_url = (
-        f"https://newsapi.org/v2/top-headlines?"
-        f"q={hakusana}&"
-        f"language=fi&"
-        f"pageSize=10&"
-        f"apiKey={NEWS_API_KEY}"
-)
 
-        
-        news_resp = requests.get(news_url)
+        # GNews API haku
+        GNEWS_API_KEY = os.getenv("GNEWS_API_KEY")
+        url = (
+            f"https://gnews.io/api/v4/search?"
+            f"q={hakusana}&lang=fi&max=10&token={GNEWS_API_KEY}"
+        )
+        response = requests.get(url)
 
         # Tulosta uutisotsikot
-        st.subheader("Uutisotsikot")
-        if news_resp.status_code == 200 and news_resp.json().get("status") == "ok":
-            articles = news_resp.json().get("articles", [])[:5]
+        st.subheader(f"Viimeisimmät uutiset aiheesta: {hakusana}")
+        if response.status_code == 200:
+            data = response.json()
+            articles = data.get("articles", [])
             if articles:
-                for art in articles:
-                    title = art.get('title','')
-                    desc = art.get('description','') or ''
-                    url = art.get('url','')
-                    pol = TextBlob(desc).sentiment.polarity
-                    senti = pol>0.1 and "Positiivinen 😊" or (pol<-0.1 and "Negatiivinen 😠" or "Neutraali 😐")
-                    st.markdown(f"""
-                        <div class='small-text' style='margin-bottom:12px;'>
-                            <strong>{title}</strong><br>
-                            <em>{desc}</em><br>
-                            Tunnelma: {senti}<br>
-                            <a href='{url}' target='_blank'>Lue lisää</a>
-                        </div>
-                    """, unsafe_allow_html=True)
+                for article in articles:
+                    st.markdown(f"**{article['title']}**")
+                    st.write(article.get('description', ''))
+                    st.write(article['url'])
             else:
                 st.info("Ei uutisia haun perusteella.")
         else:
-            st.error(f"Uutisten hakeminen epäonnistui: HTTP {news_resp.status_code}")
+            st.error(f"Uutisten hakeminen epäonnistui: HTTP {response.status_code}")
 
         # Hakutrendi (simuloitu)
         st.subheader("Hakutrendi (simuloitu)")
@@ -90,6 +81,7 @@ if page == "Pääsivu – uutiset":
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %y'))
         fig.autofmt_xdate()
         st.pyplot(fig)
+
 
 # Sivupohja: vertailu
 elif page == "Vertailu":
