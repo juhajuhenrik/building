@@ -46,10 +46,13 @@ if page == "Pääsivu – uutiset":
         start_date = end_date - timedelta(days=180)
         # Hae uutiset
         news_url = (
-            f"https://newsapi.org/v2/everything?"
-            f"q={hakusana}&from={start_date}&to={end_date}&"
-            "sortBy=publishedAt&language=fi&"
-            f"apiKey={NEWS_API_KEY}"
+        f"https://newsapi.org/v2/top-headlines?"
+        f"q={hakusana}&"
+        f"language=fi&"
+        f"pageSize=10&"
+        f"apiKey={NEWS_API_KEY}"
+)
+
         )
         news_resp = requests.get(news_url)
 
