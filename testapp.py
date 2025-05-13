@@ -18,6 +18,7 @@ load_dotenv(dotenv_path="config/.env")  # Polku .env-tiedostoon
 
 SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 GNEWS_API_KEY = os.getenv("GNEWS_API_KEY")
+NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 
 # Varmista, että avaimet löytyivät; jos eivät, näytä virhe ja pysäytä suoritus
 st.set_page_config(layout="wide", page_title="Kilpailija-analytiikka")
