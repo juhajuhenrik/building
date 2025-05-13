@@ -21,8 +21,8 @@ GNEWS_API_KEY = os.getenv("GNEWS_API_KEY")
 
 # Varmista, että avaimet löytyivät; jos eivät, näytä virhe ja pysäytä suoritus
 st.set_page_config(layout="wide", page_title="Kilpailija-analytiikka")
-if not NEWS_API_KEY or not SERPAPI_KEY:
-    st.error("Puuttuvat API-avaimet. Lisää NEWS_API_KEY ja SERPAPI_KEY ympäristömuuttujiksi tai config/.env-tiedostoon.")
+if not GNEWS_API_KEY  or not SERPAPI_KEY:
+    st.error("Puuttuvat API-avaimet. Lisää GNEWS_API_KEY  ja SERPAPI_KEY ympäristömuuttujiksi tai config/.env-tiedostoon.")
     st.stop()
 
 # Piilotetaan valikko ja footer + tyylit
