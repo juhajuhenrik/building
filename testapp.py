@@ -10,6 +10,8 @@ import matplotlib.dates as mdates
 from datetime import datetime, timedelta
 import random
 
+
+
 # --- Lataa API-avaimet ympäristömuuttujista tai .env-tiedostosta ---
 # Asenna python-dotenv: pip install python-dotenv
 load_dotenv(dotenv_path="config/.env")  # Polku .env-tiedostoon
