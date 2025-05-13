@@ -53,7 +53,7 @@ if page == "Pääsivu – uutiset":
         f"apiKey={NEWS_API_KEY}"
 )
 
-        )
+        
         news_resp = requests.get(news_url)
 
         # Tulosta uutisotsikot
